@@ -43,7 +43,7 @@ namespace NJsonSchema.Generation
         public JToken Generate(JsonSchema schema)
         {
             var stack = new Stack<JsonSchema>();
-            stack.Push(schema);
+            stack.Push(schema); // 这个的意义何在啊？感觉没有必要啊。
             return Generate(schema, stack);
         }
 
@@ -61,7 +61,7 @@ namespace NJsonSchema.Generation
 
                 if (schema.Type.IsObject() || GetPropertiesToGenerate(schema.AllOf).Any())
                 {
-                    var schemas = new[] { schema }.Concat(schema.AllOf.Select(x => x.ActualSchema));
+                    var schemas = new[] { schema }.Concat(schema.AllOf.Select(x => x.ActualSchema)); // 一个是下面的 `ActualProperties` 不知道为什么要掉过 InheritedSchema，第二是如果 ActualProperties 正确，这里没必要 Concat AllOf 啊
                     var properties = GetPropertiesToGenerate(schemas);
 
                     var obj = new JObject();

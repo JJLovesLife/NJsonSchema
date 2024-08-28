@@ -247,6 +247,7 @@ namespace NJsonSchema
 
             if (obj is IJsonReference reference && reference.Reference != null)
             {
+                // 这里就是有多层级的引用，会往深处去解开。
                 var result = ResolveDocumentReferenceWithoutDereferencing(reference.Reference, segments, targetType, contractResolver, checkedObjects);
                 if (result == null)
                 {

@@ -66,6 +66,7 @@ namespace NJsonSchema.Visitors
         /// <returns>The task.</returns>
         protected virtual async Task VisitAsync(object obj, string path, string? typeNameHint, ISet<object> checkedObjects, Action<object> replacer, CancellationToken cancellationToken)
         {
+            // JsonSchema, OpenApiDiscriminator, JsonSchemaProperty, string, bool
             cancellationToken.ThrowIfCancellationRequested();
             if (obj == null || checkedObjects.Contains(obj))
             {
@@ -147,7 +148,7 @@ namespace NJsonSchema.Visitors
                     await VisitAsync(schema.DictionaryKey, path + "/x-dictionaryKey", null, checkedObjects, o => schema.DictionaryKey = (JsonSchema)o, cancellationToken).ConfigureAwait(false);
                 }
 
-                if (schema.DiscriminatorRaw != null)
+                if (schema.DiscriminatorRaw != null) // ignore as it relate to OpenAPI
                 {
                     await VisitAsync(schema.DiscriminatorRaw, path + "/discriminator", null, checkedObjects, o => schema.DiscriminatorRaw = o, cancellationToken).ConfigureAwait(false);
                 }
@@ -159,7 +160,7 @@ namespace NJsonSchema.Visitors
 
                 foreach (var p in schema.PatternProperties.ToArray())
                 {
-                    await VisitAsync(p.Value, path + "/patternProperties/" + p.Key, null, checkedObjects, o => schema.PatternProperties[p.Key] = (JsonSchemaProperty)o, cancellationToken).ConfigureAwait(false);
+                    await VisitAsync(p.Value, path + "/patternProperties/" + p.Key, p.Key, checkedObjects, o => schema.PatternProperties[p.Key] = (JsonSchemaProperty)o, cancellationToken).ConfigureAwait(false);
                 }
 
                 foreach (var p in schema.Definitions.ToArray())
@@ -180,6 +181,7 @@ namespace NJsonSchema.Visitors
 
             if (!(obj is string) && !(obj is JToken) && obj.GetType() != typeof(JsonSchema)) // Reflection fallback
             {
+                // e.g., JsonSchemaProperty
                 if (_contractResolver.ResolveContract(obj.GetType()) is JsonObjectContract contract)
                 {
                     foreach (var property in contract.Properties.Where(p =>

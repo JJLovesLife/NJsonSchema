@@ -253,7 +253,9 @@ namespace NJsonSchema
             }
         }
 
-        /// <summary>Gets the inherited/parent schema (most probable base schema in allOf).</summary>
+        /// <summary>Gets the inherited/parent schema (most probable base schema in allOf).
+        /// 看它说的，这个好像是 allOf 的 base，是一个猜测出来的值。不是和确定它的意义。
+        /// </summary>
         /// <remarks>Used for code generation.</remarks>
         [JsonIgnore]
         public JsonSchema? InheritedSchema
@@ -376,7 +378,7 @@ namespace NJsonSchema
                 var properties = _properties
                     .Union(
                         _allOf
-                            .Where(s => s.ActualSchema != InheritedSchema)
+                            .Where(s => s.ActualSchema != InheritedSchema) // 为什么这个要跳过 InheritedSchema？这里不是应该是所有的 properties 吗，不因该是取所有并集之后去重吗？allOf不是可以描述同一个property的吗？
                             .SelectMany(s => s.ActualSchema.ActualProperties)
                     );
 

@@ -70,7 +70,10 @@ namespace NJsonSchema.Validation
             return Validate(token, schema.ActualSchema, schemaType, null, token.Path);
         }
 
-        /// <summary>Validates the given JSON token.</summary>
+        /// <summary>Validates the given JSON token.
+        /// Jtoken: array[i], obj[property]
+        /// JsonSchema: schema, allOf, anyOf, oneOf, not
+        /// </summary>
         /// <param name="token">The token.</param>
         /// <param name="schema">The schema.</param>
         /// <param name="schemaType">The type of the schema.</param>
